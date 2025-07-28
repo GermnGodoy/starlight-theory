@@ -1,0 +1,70 @@
+---
+export interface Props {
+  allTags: string[];
+  allPosts: any[];
+}
+
+const { allTags, allPosts } = Astro.props;
+---
+
+<div class="tag-filter-container p-6 lg:p-10">
+  <div class="flex flex-wrap gap-3 items-center">
+    <span class="text-sm font-medium text-gray11 mr-2">Filter by topic:</span>
+    <button 
+      class="tag-btn active" 
+      data-tag="all"
+    >
+      All
+    </button>
+    {allTags.map(tag => (
+      <button 
+        class="tag-btn" 
+        data-tag={tag}
+      >
+        {tag}
+      </button>
+    ))}
+  </div>
+</div>
+
+<style>
+  .tag-btn {
+    @apply px-3 py-1.5 text-sm font-medium rounded border border-gray8 bg-gray4-light dark:bg-gray4-dark text-gray11 hover:bg-gray5-light dark:hover:bg-gray5-dark hover:text-gray1 dark:hover:text-gray12 transition-all duration-200;
+  }
+  
+  .tag-btn.active {
+    @apply bg-gray12-light dark:bg-gray12-dark text-white dark:text-gray1 border-gray12;
+  }
+  
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tagButtons = document.querySelectorAll('.tag-btn');
+    const postElements = document.querySelectorAll('[data-post-tags]');
+    
+    tagButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const selectedTag = (button as HTMLElement).dataset.tag;
+        
+        // Update active button
+        tagButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        // Filter posts
+        postElements.forEach(post => {
+          const postTags = (post as HTMLElement).dataset.postTags?.split(',') || [];
+          const shouldShow = selectedTag === 'all' || postTags.includes(selectedTag);
+          
+          if (shouldShow) {
+            (post as HTMLElement).style.display = '';
+            (post as HTMLElement).style.opacity = '1';
+          } else {
+            (post as HTMLElement).style.display = 'none';
+            (post as HTMLElement).style.opacity = '0';
+          }
+        });
+      });
+    });
+  });
+</script>

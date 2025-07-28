@@ -1,0 +1,83 @@
+---
+import BackgroundStripes from '../components/BackgroundStripes.astro';
+import '../styles/global.css';
+import params from '../params.json';
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { 
+  title, 
+  description = params.seo.defaultDescription 
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="author" content={params.site.author.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={params.seo.ogSiteName} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content={params.seo.twitterCreator} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    
+    <title>{title}</title>
+    
+    <script>
+      // Enhanced theme system with manual override support
+      function getCurrentTheme() {
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme) {
+          return storedTheme;
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      
+      function applyTheme(theme) {
+        const html = document.documentElement;
+        html.classList.remove('light', 'dark');
+        html.classList.add(theme);
+      }
+      
+      // Apply theme on page load
+      const initialTheme = getCurrentTheme();
+      applyTheme(initialTheme);
+      
+      // Listen for system theme changes only when no manual preference is set
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    </script>
+  </head>
+  <body class="font-sans antialiased bg-bg-primary-light dark:bg-bg-primary-dark text-text-primary-light dark:text-text-primary-dark">
+    <div class="min-h-screen flex isolate">
+      <div class="pattern-background fixed inset-0 -z-10"></div>
+      <!-- <BackgroundStripes class="fixed inset-0" /> -->
+      <div class="relative mx-auto px-4 max-w-[1450px] w-full z-10">
+        <div class="bg-bg-main-content-light dark:bg-bg-main-content-dark border-l border-r border-border-color-light dark:border-border-color-dark relative z-20">
+          <slot />
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

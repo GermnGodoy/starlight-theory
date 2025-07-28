@@ -1,0 +1,95 @@
+---
+// For now, create a simplified subscribe button without the API functionality
+---
+
+<div id="subscribe-container">
+  <button 
+    id="subscribe-btn" 
+    class="text-sm font-medium rounded-lg bg-gray12-light dark:bg-gray12-dark text-white dark:text-gray1 px-2 py-1.5 w-fit"
+  >
+    Subscribe
+  </button>
+  
+  <form 
+    id="subscribe-form" 
+    class="p-3 pl-4 pb-4 bg-gray5-light dark:bg-gray5-dark border border-gray8 rounded-xl shadow-inner flex-col gap-3 relative hidden"
+  >
+    <label class="flex flex-col">
+      <span class="flex items-center justify-between">
+        <span class="text-sm font-medium text-gray11">Email</span>
+        <button type="button" id="cancel-btn">
+          <span class="sr-only">Cancel</span>
+          <svg width="24" height="24" fill="none" class="text-gray10" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.25 6.75L6.75 17.25"></path>
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 6.75L17.25 17.25"></path>
+          </svg>
+        </button>
+      </span>
+      <input 
+        name="email" 
+        class="bg-transparent border-b py-1 focus-visible:outline-none focus-visible:border-blue9 border-gray12/25" 
+        type="email" 
+        autocomplete="off" 
+        required
+      />
+    </label>
+    <button 
+      type="submit" 
+      class="text-sm flex items-center gap-1 font-medium rounded-lg px-2 py-1.5 w-fit bg-gray12-light dark:bg-gray12-dark text-white dark:text-gray1"
+    >
+      <span>Subscribe</span>
+    </button>
+    <div id="message" class="hidden text-sm p-4 border rounded-xl -mt-6 pt-10"></div>
+  </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const subscribeBtn = document.getElementById('subscribe-btn');
+    const subscribeForm = document.getElementById('subscribe-form');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const messageDiv = document.getElementById('message');
+    
+    subscribeBtn?.addEventListener('click', () => {
+      subscribeBtn.style.display = 'none';
+      subscribeForm?.classList.remove('hidden');
+      subscribeForm?.classList.add('flex');
+      (subscribeForm?.querySelector('input') as HTMLInputElement)?.focus();
+    });
+    
+    cancelBtn?.addEventListener('click', () => {
+      subscribeForm?.classList.add('hidden');
+      subscribeForm?.classList.remove('flex');
+      subscribeBtn!.style.display = 'block';
+      messageDiv?.classList.add('hidden');
+    });
+    
+    subscribeForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target as HTMLFormElement);
+      const email = formData.get('email') as string;
+      
+      // Simple email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showMessage('Please enter a valid email address', 'error');
+        return;
+      }
+      
+      // For demo purposes, just show success message
+      showMessage('Thanks for your interest! This is a demo version.', 'success');
+    });
+    
+    function showMessage(text: string, type: 'success' | 'error') {
+      if (!messageDiv) return;
+      
+      messageDiv.textContent = text;
+      messageDiv.className = `text-sm p-4 border rounded-xl -mt-6 pt-10 ${
+        type === 'success' 
+          ? 'text-gray11 bg-gray3-light dark:bg-gray3-dark border-gray8' 
+          : 'text-red11-dark bg-red5-dark border-red8-dark'
+      }`;
+      messageDiv.classList.remove('hidden');
+    }
+  });
+</script>

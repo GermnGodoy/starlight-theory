@@ -1,0 +1,36 @@
+{
+  "site": {
+    "title": "Starlight Theory",
+    "description": "Intuitive Physics and Maths by German Godoy",
+    "author": {
+      "name": "German Godoy",
+      "twitter": "https://x.com/germngod",
+      "github": "https://github.com/GermnGodoy"
+    }
+  },
+  "sidebar": {
+    "description": "Intuitive Physics and Maths by",
+    "socialLinks": {
+      "github": {
+        "url": "https://github.com/GermnGodoy",
+        "title": "GitHub"
+      },
+      "twitter": {
+        "url": "https://x.com/germngod",
+        "title": "Twitter"
+      }
+    }
+  },
+  "homepage": {
+    "featured": {
+      "title": "Featured: Starlight Manifesto",
+      "description": "That crazy idea, that believe that things are easier of what we make them see, that the world can be understood.",
+      "url": "/starlight"
+    }
+  },
+  "seo": {
+    "defaultDescription": "Advanced physics and mathematics explained with intuitive clarity by German Godoy.",
+    "ogSiteName": "Starlight Theory",
+    "twitterCreator": "@germngod"
+  }
+}

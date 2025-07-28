@@ -1,0 +1,233 @@
+---
+// ThemeToggle component for manual dark/light mode switching
+---
+
+<button 
+  id="theme-toggle" 
+  class="theme-toggle-btn group relative p-3 rounded-full bg-gray5-light dark:bg-gray5-dark hover:bg-gray6-light dark:hover:bg-gray6-dark border dark:border-gray7 border-gray9/80 hover:border-gray8 transition-all duration-300 hover:scale-105 active:scale-95"
+  title="Toggle theme"
+  aria-label="Toggle between light and dark mode"
+>
+  <!-- Sun icon (shown in light mode) -->
+  <svg 
+    class="sun-icon w-5 h-5 text-current transition-all duration-700" 
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="rgba(0, 0, 0, 0.4)"
+    stroke-width="2"
+  >
+    <path 
+      stroke-linecap="round" 
+      stroke-linejoin="round" 
+      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+    />
+  </svg>
+  
+  <!-- Moon icon (shown in dark mode) -->
+  <svg 
+    class="moon-icon w-5 h-5 text-current transition-all duration-700" 
+    fill="currentColor" 
+    viewBox="0 0 24 24"
+  >
+    <path 
+      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+    />
+  </svg>
+</button>
+
+<style>
+  .theme-toggle-btn {
+    position: relative;
+    backdrop-filter: blur(12px);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.12),
+      0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Position both icons absolutely */
+  .sun-icon,
+  .moon-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  /* Default state: Show sun icon with gentle rotation */
+  .sun-icon {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+  
+  .moon-icon {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-180deg) scale(0.3);
+  }
+  
+  /* Dark mode: Elegant transition to moon */
+  :global(.dark) .sun-icon {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(180deg) scale(0.3);
+  }
+  
+  :global(.dark) .moon-icon {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+  
+  /* Beautiful hover effects */
+  .theme-toggle-btn:hover .sun-icon {
+    transform: translate(-50%, -50%) rotate(90deg) scale(1.15);
+  }
+  
+  :global(.dark) .theme-toggle-btn:hover .moon-icon {
+    transform: translate(-50%, -50%) rotate(-20deg) scale(1.15);
+  }
+  
+  /* Enhanced button interactions */
+  .theme-toggle-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .theme-toggle-btn:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Continuous sun rotation animation */
+  @keyframes sun-rays {
+    0% { 
+      transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    }
+    100% { 
+      transform: translate(-50%, -50%) rotate(360deg) scale(1);
+    }
+  }
+  
+  /* Gentle moon sway animation */
+  @keyframes moon-sway {
+    0%, 100% { 
+      transform: translate(-50%, -50%) rotate(-5deg) scale(1);
+    }
+    50% { 
+      transform: translate(-50%, -50%) rotate(5deg) scale(1);
+    }
+  }
+  
+  /* Apply animations on hover */
+  .theme-toggle-btn:hover .sun-icon {
+    animation: sun-rays 2s linear infinite;
+  }
+  
+  :global(.dark) .theme-toggle-btn:hover .moon-icon {
+    animation: moon-sway 3s ease-in-out infinite;
+  }
+  
+  /* Magical click effect */
+  @keyframes magic-burst {
+    0% {
+      box-shadow: 
+        0 0 0 0 rgba(59, 130, 246, 0.4),
+        0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+    50% {
+      box-shadow: 
+        0 0 0 8px rgba(59, 130, 246, 0.1),
+        0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+    100% {
+      box-shadow: 
+        0 0 0 16px rgba(59, 130, 246, 0),
+        0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+  }
+  
+  .theme-toggle-btn:active {
+    animation: magic-burst 0.6s ease-out;
+  }
+  
+  /* Breathing effect on idle */
+  @keyframes gentle-breathe {
+    0%, 100% { 
+      transform: scale(1);
+    }
+    50% { 
+      transform: scale(1.02);
+    }
+  }
+  
+  .theme-toggle-btn {
+    animation: gentle-breathe 4s ease-in-out infinite;
+  }
+  
+  .theme-toggle-btn:hover {
+    animation: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleButton = document.getElementById('theme-toggle');
+    
+    if (!toggleButton) return;
+    
+    // Initialize the toggle button appearance
+    updateToggleAppearance();
+    
+    // Add click handler
+    toggleButton.addEventListener('click', () => {
+      const currentTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      let newTheme;
+      if (currentTheme === 'dark' || (currentTheme === null && prefersDark)) {
+        newTheme = 'light';
+      } else {
+        newTheme = 'dark';
+      }
+      
+      // Store the preference
+      localStorage.setItem('theme', newTheme);
+      
+      // Apply the theme
+      applyTheme(newTheme);
+      
+      // Update toggle appearance
+      updateToggleAppearance();
+    });
+    
+    function applyTheme(theme) {
+      const html = document.documentElement;
+      html.classList.remove('light', 'dark');
+      html.classList.add(theme);
+    }
+    
+    function updateToggleAppearance() {
+      const currentTheme = getCurrentTheme();
+      const html = document.documentElement;
+      html.classList.remove('light', 'dark');
+      html.classList.add(currentTheme);
+    }
+    
+    function getCurrentTheme() {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        return storedTheme;
+      }
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    
+    // Listen for system theme changes when no manual preference is set
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        applyTheme(e.matches ? 'dark' : 'light');
+        updateToggleAppearance();
+      }
+    });
+  });
+</script>

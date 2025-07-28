@@ -1,0 +1,841 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import SubscribeButton from '../components/SubscribeButton.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import params from '../params.json';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  return blogEntries.map(entry => ({
+    params: { slug: entry.slug }, 
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+function formatDate(dateString: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    year: "numeric", 
+    day: "numeric",
+  }).format(new Date(dateString));
+}
+---
+
+<Layout title={entry.data.title} description={entry.data.description}>
+  <div class="grid-container lg:grid grid-cols-[320px_1fr]">
+    <!-- Sidebar -->
+    <aside class="z-30 p-6 pl-4 pt-12 lg:p-10 lg:pl-6 border-black/75 top-0 flex flex-col gap-6 relative border-b lg:border-b-0 border-r border-l lg:sticky lg:h-screen bg-white/80 dark:bg-black/80 dark:border-white/30">
+      <div class="flex items-start justify-between">
+        <a href="/" class="font-serif text-[64px] leading-[1] hover:text-gray11 transition-colors text-left">{params.site.title}</a>
+      </div>
+      <div class="md:flex lg:flex lg:flex-col lg:items-start lg:space-y-8 space-y-6 md:space-y-0 justify-between">
+        <p class="leading-relaxed text-left">
+          {params.sidebar.description}{" "}
+          <a
+            class="underline underline-offset-2"
+            href={params.site.author.twitter}
+          >
+            {params.site.author.name}.
+          </a>
+        </p>
+        <SubscribeButton />
+      </div>
+      <footer class="mt-auto flex justify-between items-end text-gray11">
+        <div class="flex items-center gap-3">
+          <a
+            href={params.sidebar.socialLinks.github.url}
+            target="_blank"
+            rel="noreferrer"
+            class="hover:text-gray12 transition-colors"
+            title={params.sidebar.socialLinks.github.title}
+          >
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </a>
+          <a
+            href={params.sidebar.socialLinks.twitter.url}
+            target="_blank"
+            rel="noreferrer"
+            class="hover:text-gray12 transition-colors"
+            title={params.sidebar.socialLinks.twitter.title}
+          >
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+            </svg>
+          </a>
+        </div>
+        <ThemeToggle />
+      </footer>
+    </aside>
+
+    <!-- Main content -->
+    <main class="z-30 border-x lg:border-l-0 bg-white/90 dark:bg-black/90 border-black/75 dark:border-white/30">
+      <article class="max-w-none mx-auto mb-10">
+        <!-- Article header -->
+        <header class="p-2 lg:px-3 lg:py-10 lg:pb-8 border-b border-dashed border-black/75 dark:border-white/30 flex ">
+          <div class="mx-auto" style="width: 90ch;">
+            <div class="space-y-4">
+              <h1 class="text-left font-serif text-4xl lg:text-5xl leading-tight text-black dark:text-white" style="letter-spacing: -0.02em;">
+                {entry.data.title}
+              </h1>
+              <p class="text-left text-xl text-gray10 dark:text-gray11 leading-relaxed max-w-3xl" style="line-height: 1.6;">
+                {entry.data.description}
+              </p>
+              <div class="flex flex-wrap items-center gap-4 pt-2">
+                <p class="text-sm text-gray10 font-medium">
+                  {formatDate(entry.data.editedAt)}
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  {entry.data.tags.map(tag => (
+                    <span class="text-xs px-2 py-1 bg-gray6-light dark:bg-gray6-dark text-gray1 dark:text-gray11 rounded-sm font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Article content -->
+        <div class="p-6 lg:px-6 lg:py-10">
+          <div class="prose prose-xl prose-gray text-text-primary-light!! dark:opacity-85 opacity-95 dark:text-text-primary-dark!! mx-auto" style="max-width: 65ch;">
+            <Content />
+          </div>
+        </div>
+      </article>
+
+    </main>
+  </div>
+</Layout>
+
+<style>
+  /* Force grid layout to work correctly */
+  @media (min-width: 1024px) {
+    .grid-container {
+      display: grid !important;
+      grid-template-columns: 320px 1fr !important;
+    }
+    
+    .grid-container aside {
+      width: 320px !important;
+      max-width: 320px !important;
+      min-width: 320px !important;
+    }
+    
+    .grid-container main {
+      width: auto !important;
+      max-width: none !important;
+      flex: 1 !important;
+    }
+  }
+  
+  /* Base prose styling - let Typography plugin handle most of it */
+  .prose {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 22px;
+    line-height: 1.7;
+    max-width: 65ch;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    -moz-hyphens: auto !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    text-align: justify !important;
+  }
+  
+  /* Remove overly broad selector - let elements have their own styling */
+  
+  /* Ultra-specific heading styling with highest priority */
+  div.prose.prose-xl.prose-gray h1 {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    color: black !important;
+    margin-top: 0 !important;
+    margin-bottom: 2rem !important;
+    line-height: 1.2 !important;
+    display: block !important;
+  }
+  
+  div.prose.prose-xl.prose-gray h2 {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    color: black !important;
+    margin-top: 3rem !important;
+    margin-bottom: 1.5rem !important;
+    line-height: 1.3 !important;
+    display: block !important;
+  }
+  
+  div.prose.prose-xl.prose-gray h3 {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: black !important;
+    margin-top: 2.5rem !important;
+    margin-bottom: 1rem !important;
+    line-height: 1.4 !important;
+    display: block !important;
+  }
+  
+  div.prose.prose-xl.prose-gray h4,
+  div.prose.prose-xl.prose-gray h5,
+  div.prose.prose-xl.prose-gray h6 {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: black !important;
+    margin-top: 2rem !important;
+    margin-bottom: 0.75rem !important;
+    display: block !important;
+  }
+  
+  /* Typography plugin dark mode color overrides with maximum specificity */
+  :global(.dark) .prose h1,
+  :global(.dark) .prose h2,
+  :global(.dark) .prose h3,
+  :global(.dark) .prose h4,
+  :global(.dark) .prose h5,
+  :global(.dark) .prose h6,
+  :global(.dark) div.prose.prose-xl.prose-gray h1,
+  :global(.dark) div.prose.prose-xl.prose-gray h2,
+  :global(.dark) div.prose.prose-xl.prose-gray h3,
+  :global(.dark) div.prose.prose-xl.prose-gray h4,
+  :global(.dark) div.prose.prose-xl.prose-gray h5,
+  :global(.dark) div.prose.prose-xl.prose-gray h6,
+  :global(html.dark) .prose h1,
+  :global(html.dark) .prose h2,
+  :global(html.dark) .prose h3,
+  :global(html.dark) .prose h4,
+  :global(html.dark) .prose h5,
+  :global(html.dark) .prose h6,
+  :global(.dark) .prose.prose-xl.prose-gray h1,
+  :global(.dark) .prose.prose-xl.prose-gray h2,
+  :global(.dark) .prose.prose-xl.prose-gray h3,
+  :global(.dark) .prose.prose-xl.prose-gray h4,
+  :global(.dark) .prose.prose-xl.prose-gray h5,
+  :global(.dark) .prose.prose-xl.prose-gray h6,
+  /* Target specific typography plugin gray variant classes */
+  :global(.dark) .prose-gray h1,
+  :global(.dark) .prose-gray h2,
+  :global(.dark) .prose-gray h3,
+  :global(.dark) .prose-gray h4,
+  :global(.dark) .prose-gray h5,
+  :global(.dark) .prose-gray h6,
+  :global(.dark) .prose-xl h1,
+  :global(.dark) .prose-xl h2,
+  :global(.dark) .prose-xl h3,
+  :global(.dark) .prose-xl h4,
+  :global(.dark) .prose-xl h5,
+  :global(.dark) .prose-xl h6,
+  /* Additional overrides to beat Tailwind typography plugin */
+  :global(html.dark) .prose.prose-xl.prose-gray h1,
+  :global(html.dark) .prose.prose-xl.prose-gray h2,
+  :global(html.dark) .prose.prose-xl.prose-gray h3,
+  :global(html.dark) .prose.prose-xl.prose-gray h4,
+  :global(html.dark) .prose.prose-xl.prose-gray h5,
+  :global(html.dark) .prose.prose-xl.prose-gray h6 {
+    color: white !important;
+  }
+  
+  /* Add font family to ultra-specific selectors */
+  div.prose.prose-xl.prose-gray h1,
+  div.prose.prose-xl.prose-gray h2,
+  div.prose.prose-xl.prose-gray h3,
+  div.prose.prose-xl.prose-gray h4,
+  div.prose.prose-xl.prose-gray h5,
+  div.prose.prose-xl.prose-gray h6 {
+    font-family: 'Libre Baskerville', Georgia, serif !important;
+  }
+  
+  /* Nuclear paragraph spacing override */
+  .prose p,
+  .prose-xl p,
+  .prose-gray p,
+  div.prose p,
+  div.prose.prose-xl.prose-gray p {
+    font-family: 'Lato', sans-serif !important;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    -moz-hyphens: auto !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+  
+  /* Add minimal spacing between paragraphs using margin-top */
+  .prose p + p,
+  .prose-xl p + p,
+  .prose-gray p + p,
+  div.prose p + p,
+  div.prose.prose-xl.prose-gray p + p {
+    margin-top: 0.75em !important;
+  }
+  
+  /* First paragraph special styling */
+  .prose > p:first-of-type {
+    font-size: 1.125rem !important;
+  }
+  
+  /* Enhanced list styling */
+  .prose ul,
+  .prose ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+  }
+  
+  .prose li {
+    margin-bottom: 0.5rem;
+    line-height: 1.7;
+  }
+  
+  .prose li p {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Improved code styling */
+  .prose code {
+    @apply bg-gray6-light dark:bg-gray6-dark text-gray12 font-mono;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+    font-weight: 500;
+  }
+  
+  .prose pre {
+    @apply bg-gray3-light dark:bg-gray3-dark border border-gray8;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  
+  .prose pre code {
+    @apply bg-transparent;
+    padding: 0;
+    font-size: 0.875rem;
+  }
+  
+  /* Enhanced blockquote styling */
+  .prose blockquote {
+    @apply border-l-4 border-blue9 bg-gray3-light dark:bg-gray3-dark text-gray11;
+    margin: 1.5rem 0;
+    padding: 1.5rem 2rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
+    font-size: 1.1em;
+    position: relative;
+  }
+  
+  .prose blockquote p {
+    margin-bottom: 0.75rem;
+  }
+  
+  .prose blockquote:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Link styling */
+  .prose a {
+    color: #3b82f6;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    transition: all 0.2s ease;
+  }
+  
+  .prose a:hover {
+    color: #1d4ed8;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .prose a {
+      color: #60a5fa;
+    }
+    
+    .prose a:hover {
+      color: #93c5fd;
+    }
+  }
+  
+  /* Text emphasis - removed, handled at bottom */
+  
+  .prose em {
+    font-style: italic;
+    font-variation-settings: 'slnt' -10;
+  }
+  
+  /* Table styling */
+  .prose table {
+    @apply border border-gray8;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    width: 100%;
+  }
+  
+  .prose th,
+  .prose td {
+    @apply border-r border-b border-gray7 p-3;
+    text-align: left;
+  }
+  
+  .prose th {
+    @apply bg-gray5-light dark:bg-gray5-dark font-semibold text-gray12;
+  }
+  
+  /* Horizontal rule */
+  .prose hr {
+    @apply border-gray7;
+    margin: 3rem 0;
+    border-width: 1px 0 0 0;
+  }
+  
+  /* KaTeX Math Styling - Enhanced with Maximum Specificity */
+  .katex {
+    font-size: 2em !important;
+    color: inherit !important;
+    font-family: 'Palatino', 'Palatino Linotype', 'Book Antiqua', Georgia, serif !important;
+    font-weight: 550 !important;
+  }
+  
+  /* Display math ($$...$$) - Force centered with high specificity */
+  .katex-display,
+  .prose .katex-display,
+  .prose-xl .katex-display,
+  .prose-gray .katex-display,
+  div.prose .katex-display,
+  div.prose.prose-xl.prose-gray .katex-display,
+  .prose p .katex-display,
+  .prose span.katex-display {
+    text-align: center !important;
+    margin: 2rem auto !important;
+    padding: 1rem 0 !important;
+    font-size: 2.2em !important;
+    overflow-x: auto !important;
+    display: block !important;
+    width: 100% !important;
+    clear: both !important;
+    font-family: 'Palatino', 'Palatino Linotype', 'Book Antiqua', Georgia, serif !important;
+    font-weight: 600 !important;
+  }
+  
+  /* Force paragraph containers to center their math */
+  .prose p:has(.katex-display) {
+    text-align: center !important;
+  }
+  
+  /* Alternative approach - target math wrapper elements */
+  .prose .math,
+  .prose .math-display,
+  .prose span.math,
+  .prose span.math-display {
+    display: block !important;
+    text-align: center !important;
+    margin: 2rem auto !important;
+    width: 100% !important;
+  }
+  
+  /* Inline math styling */
+  .prose .katex,
+  .prose-xl .katex,
+  .prose-gray .katex {
+    display: inline !important;
+    font-size: 2em !important;
+    font-family: 'Palatino', 'Palatino Linotype', 'Book Antiqua', Georgia, serif !important;
+    font-weight: 550 !important;
+  }
+  
+  /* Dark mode KaTeX styling */
+  :global(.dark) .katex,
+  :global(.dark) .katex-display,
+  :global(.dark) .prose .katex,
+  :global(.dark) .prose .katex-display {
+    color: white !important;
+  }
+  
+  /* Ensure KaTeX elements don't get overridden by prose styles */
+  :global(.dark) .katex *,
+  :global(.dark) .katex-display * {
+    color: inherit !important;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .prose {
+      font-size: 20px;
+      line-height: 1.6;
+    }
+    
+    .prose h1 {
+      font-size: 2rem;
+    }
+    
+    .prose h2 {
+      font-size: 1.75rem;
+    }
+    
+    .prose h3 {
+      font-size: 1.375rem;
+    }
+  }
+  
+  /* Figure and caption styling */
+  .prose figure {
+    margin: 2.5rem 0;
+    text-align: center;
+  }
+  
+  .prose figcaption {
+    @apply text-gray10;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-top: 0.75rem;
+    font-style: italic;
+  }
+  
+  /* Image styling */
+  .prose img {
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    max-width: 100%;
+    height: auto;
+  }
+  
+  
+  /* Academic formatting - footnotes and citations */
+  .prose sup {
+    font-size: 0.75em;
+    line-height: 1;
+    font-weight: 500;
+  }
+  
+  .prose sub {
+    font-size: 0.75em;
+    line-height: 1;
+  }
+  
+  /* Drop caps for first letter of articles */
+  .prose > p:first-of-type::first-letter {
+    float: left;
+    font-family: 'PP Editorial New', Georgia, serif;
+    font-size: 4rem;
+    line-height: 3.5rem;
+    padding-right: 0.5rem;
+    margin-top: 0.25rem;
+    font-weight: 700;
+  }
+  
+  /* Enhanced section breaks */
+  .prose > h2 + p {
+    margin-top: 0;
+  }
+  
+  .prose > h3 + p {
+    margin-top: 0;
+  }
+  
+  /* Pull quotes */
+  .prose .pullquote {
+    @apply text-gray11;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin: 3rem 0;
+    padding: 2rem;
+    text-align: center;
+    font-style: italic;
+    font-weight: 500;
+    border-top: 2px solid rgb(59, 130, 246);
+    border-bottom: 2px solid rgb(59, 130, 246);
+  }
+  
+  /* Ensure strong emphasis uses appropriate color */
+  .prose strong {
+    font-weight: 600;
+  }
+  
+  /* Dark mode text color overrides for all prose elements */
+  :global(.dark) .prose,
+  :global(.dark) .prose p,
+  :global(.dark) .prose li,
+  :global(.dark) .prose span,
+  :global(.dark) .prose div {
+    color: white !important;
+  }
+  
+  /* Dark mode styling for emphasis elements - simplified since Tailwind config handles it */
+  :global(.dark) .prose strong,
+  :global(.dark) .prose b {
+    color: white !important;
+  }
+  
+  :global(.dark) .prose em,
+  :global(.dark) .prose i {
+    color: white !important;
+  }
+  
+  /* Dark mode for table content */
+  :global(.dark) .prose td {
+    color: white !important;
+  }
+  
+  /* Dark mode for description paragraphs */
+  :global(.dark) .prose .description,
+  :global(.dark) p.text-xl.text-gray9 {
+    color: #d1d5db !important;
+  }
+  
+  /* Final override: Force all prose elements to be white in dark mode */
+  :global(.dark) .prose.prose-xl.prose-gray * {
+    color: white !important;
+  }
+  
+  /* Ultra-specific overrides for bold elements - MAXIMUM SPECIFICITY */
+  :global(html.dark) .prose strong,
+  :global(html.dark) .prose b,
+  :global(html.dark) .prose-gray strong,
+  :global(html.dark) .prose-gray b,
+  :global(html.dark) .prose-xl strong,
+  :global(html.dark) .prose-xl b,
+  :global(html.dark) div.prose strong,
+  :global(html.dark) div.prose b,
+  :global(html.dark) article strong,
+  :global(html.dark) article b,
+  :global(.dark) .prose strong,
+  :global(.dark) .prose b,
+  :global(.dark) .prose-gray strong,
+  :global(.dark) .prose-gray b,
+  :global(.dark) .prose-xl strong,
+  :global(.dark) .prose-xl b,
+  :global(.dark) div.prose strong,
+  :global(.dark) div.prose b,
+  :global(.dark) article strong,
+  :global(.dark) article b,
+  :global(.dark) .prose.prose-xl.prose-gray strong,
+  :global(.dark) .prose.prose-xl.prose-gray b,
+  :global(.dark) div.prose.prose-xl.prose-gray strong,
+  :global(.dark) div.prose.prose-xl.prose-gray b,
+  :global(html.dark) .prose.prose-xl.prose-gray strong,
+  :global(html.dark) .prose.prose-xl.prose-gray b,
+  :global(html.dark) div.prose.prose-xl.prose-gray strong,
+  :global(html.dark) div.prose.prose-xl.prose-gray b {
+    color: white !important;
+    font-weight: 600 !important;
+  }
+  
+  /* Nuclear option - target strong/b elements in prose only */
+  :global(.dark) .prose strong,
+  :global(.dark) .prose b,
+  :global(html.dark) .prose strong,
+  :global(html.dark) .prose b {
+    color: white !important;
+  }
+  
+  /* But preserve link colors */
+  :global(.dark) .prose a {
+    color: #60a5fa !important;
+  }
+  
+  :global(.dark) .prose a:hover {
+    color: #93c5fd !important;
+  }
+</style>
+
+<!-- Additional CSS injection to override typography plugin completely -->
+<style is:inline>
+  /* Nuclear option for bold text */
+  .dark strong, .dark b {
+    color: white !important;
+  }
+  
+  .dark .prose strong, .dark .prose b {
+    color: white !important;
+  }
+  
+  html.dark strong, html.dark b {
+    color: white !important;
+  }
+  
+  html.dark .prose strong, html.dark .prose b {
+    color: white !important;
+  }
+  
+  /* Nuclear option for headings - prose only */
+  .dark .prose h1, .dark .prose h2, .dark .prose h3, 
+  .dark .prose h4, .dark .prose h5, .dark .prose h6 {
+    color: white !important;
+  }
+  
+  html.dark .prose h1, html.dark .prose h2, html.dark .prose h3,
+  html.dark .prose h4, html.dark .prose h5, html.dark .prose h6 {
+    color: white !important;
+  }
+  
+  /* Override any possible Tailwind typography colors */
+  .dark .prose-gray strong, .dark .prose-gray b,
+  .dark .prose-xl strong, .dark .prose-xl b {
+    color: white !important;
+  }
+  
+  .dark .prose-gray h1, .dark .prose-gray h2, .dark .prose-gray h3,
+  .dark .prose-gray h4, .dark .prose-gray h5, .dark .prose-gray h6,
+  .dark .prose-xl h1, .dark .prose-xl h2, .dark .prose-xl h3,
+  .dark .prose-xl h4, .dark .prose-xl h5, .dark .prose-xl h6 {
+    color: white !important;
+  }
+  
+  /* Nuclear option for KaTeX math elements */
+  .katex-display {
+    text-align: center !important;
+    margin: 2rem auto !important;
+    display: block !important;
+    width: 100% !important;
+    font-family: 'Palatino', 'Palatino Linotype', 'Book Antiqua', Georgia, serif !important;
+  }
+  
+  /* Force Palatino font for all math */
+  .katex, .katex * {
+    font-family: 'Palatino', 'Palatino Linotype', 'Book Antiqua', Georgia, serif !important;
+    font-weight: 550 !important;
+  }
+  
+  .katex-display, .katex-display * {
+    font-weight: 600 !important;
+  }
+  
+  /* Ultra-specific paragraph spacing override */
+  div.prose.prose-xl.prose-gray p {
+    margin: 0 !important;
+    line-height: 1.3 !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    word-wrap: break-word !important;
+  }
+  
+  div.prose.prose-xl.prose-gray p + p {
+    margin-top: 0.75em !important;
+  }
+  
+  /* Additional nuclear option */
+  .prose.prose-xl.prose-gray p {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 1.3 !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    word-wrap: break-word !important;
+  }
+  
+  .prose.prose-xl.prose-gray p + p {
+    margin-top: 0.75em !important;
+  }
+  
+  /* Force hyphenation globally */
+  .prose, .prose * {
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    -moz-hyphens: auto !important;
+  }
+  
+  /* Floating right image figure */
+  .prose figure.float-right-image {
+    float: right !important;
+    margin: 0 0 1.5rem 2rem !important;
+    max-width: 350px !important;
+    width: 40% !important;
+    clear: both !important;
+  }
+  
+  .prose figure.float-right-image img {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(0, 0, 0, 0.7) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .dark .prose figure.float-right-image img {
+    filter: invert(1);
+  }
+  
+  .prose figure.float-right-image figcaption {
+    font-size: 0.85rem !important;
+    color: #666 !important;
+    text-align: center !important;
+    font-style: italic !important;
+    line-height: 1.4 !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .dark .prose figure.float-right-image figcaption {
+    color: #aaa !important;
+  }
+  
+  @media (max-width: 768px) {
+    .prose figure.float-right-image {
+      float: none !important;
+      margin: 1.5rem auto !important;
+      display: block !important;
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+  }
+  
+  /* Force centering for math containers */
+  .prose .math.math-display,
+  .prose .math-display,
+  .prose .katex-display,
+  .math.math-display,
+  .math-display {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin: 2rem auto !important;
+  }
+  
+  /* Target any wrapper elements */
+  .prose p:has(.katex-display),
+  .prose p .katex-display {
+    text-align: center !important;
+  }
+  
+  .dark .katex, .dark .katex-display {
+    color: white !important;
+  }
+  
+  html.dark .katex, html.dark .katex-display {
+    color: white !important;
+  }
+  
+  /* Ultimate nuclear option - target any element containing display math */
+  p:has(span.katex-display),
+  div:has(span.katex-display),
+  span:has(.katex-display) {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+  }
+  
+  /* Direct targeting of common remark-math output structures */
+  .prose span.katex.katex-display,
+  .prose .katex.katex-display {
+    display: block !important;
+    text-align: center !important;
+    margin: 2rem auto !important;
+    width: 100% !important;
+  }
+</style>
