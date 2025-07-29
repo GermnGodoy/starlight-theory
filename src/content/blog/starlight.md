@@ -1,7 +1,7 @@
 ---
 title: "Starlight Manifesto"
-description: "Trying to see the world intuitive"
-abstract: "After four years studying physics at university, no one has explained *why* Newton's laws work or why they are that way. We memorize formulas without understanding them. Universities have become degree factories that teach neither deep theory nor practical skills—just enough to pass exams. The worst part? Nobody seems to care."
+description: "Trying to see the world intuitively"
+abstract: "After four years studying physics at university, no one has explained why Newton's laws work or why they are that way. We memorize formulas without understanding them. Universities have become degree factories that teach neither deep theory nor practical skills—just enough to pass exams. The worst part? Nobody seems to care."
 editedAt: "2025-7-28"
 image: "/images/clown.png"
 tags: []
