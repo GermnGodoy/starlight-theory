@@ -1,6 +1,8 @@
 # Starlight Theory
 
-An educational physics and mathematics blog by German Godoy, built with Astro for optimal performance.
+An educational physics and mathematics blog by German Godoy, built with Astro for optimal performance (visit it at [starlight-theory.com](https://www.starlight-theory.com)).
+
+<img width="1263" height="794" alt="Screenshot 2025-07-29 at 19 55 54" src="https://github.com/user-attachments/assets/a8982d6b-3e74-417c-adae-bd5c58838fdb" />
 
 ## Features
 
